@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MagicVilla_ClassLibrary.Models.Dto;
+using MagicVilla_VillaAPI.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla_VillaAPI.Controllers
@@ -17,5 +19,11 @@ namespace MagicVilla_VillaAPI.Controllers
             };
         }
 
+
+        [HttpGet("{id:int}")]
+        public VillaDTO GetVilla(int id)
+        {
+            return VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+        }
     }
 }
