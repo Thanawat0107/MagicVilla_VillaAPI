@@ -1,5 +1,6 @@
 global using MagicVilla_ClassLibrary.Models;
 using MagicVilla_VillaAPI.Data;
+using MagicVilla_VillaAPI.Mapper;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 //CONTEXT
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
