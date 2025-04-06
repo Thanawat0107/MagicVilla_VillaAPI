@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagicVilla_VillaAPI.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
+    [ApiController]
     public class VillaAPIController : ControllerBase
     {
         [HttpGet]
@@ -77,33 +77,6 @@ namespace MagicVilla_VillaAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:int}", Name = "UpdateVilla")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult UpdateVilla(int id, [FromBody] VillaDTO villaDTO)
-        {
-            if (villaDTO == null || id != villaDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
-
-
-            if (villa == null)
-            {
-                return NotFound();
-            }
-
-            villa.Name = villaDTO.Name;
-            villa.Sqft = villaDTO.Sqft;
-            villa.Occupancy = villaDTO.Occupancy;
-
-
-            return NoContent();
-        }
-
         [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -114,24 +87,19 @@ namespace MagicVilla_VillaAPI.Controllers
                 return BadRequest();
             }
 
-
             var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
-
 
             if (villa == null)
             {
                 return BadRequest();
             }
 
-
             patchDTO.ApplyTo(villa, ModelState);
-
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
 
             return NoContent();
         }
