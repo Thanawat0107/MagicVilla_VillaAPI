@@ -23,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 
 //SERVICE
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();
+builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
 
 var app = builder.Build();
 
