@@ -1,11 +1,10 @@
 using AutoMapper;
 using MagicVilla_ClassLibrary.Models.Dto;
 using MagicVilla_ClassLibrary.Models;
-using MagicVilla_Web.Models;
 using MagicVilla_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Diagnostics;
+using MagicVilla_ClassLibrary.Utility;
 
 namespace MagicVilla_Web.Controllers
 {
@@ -23,7 +22,7 @@ namespace MagicVilla_Web.Controllers
         {
             List<VillaDTO> list = new();
 
-            var response = await _villaService.GetAllAsync<APIResponse>();
+            var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.AccessToken));
             if (response != null && response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
