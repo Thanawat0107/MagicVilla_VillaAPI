@@ -15,5 +15,7 @@ namespace MagicVilla_ClassLibrary.Utility
             PUT,
             DELETE
         }
+
+        public static string AccessToken = "JWTToken";
     }
 }
