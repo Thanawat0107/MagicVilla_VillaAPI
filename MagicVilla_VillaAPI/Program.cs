@@ -14,7 +14,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+//CONTEXT
+#region Important ต้องอยู่เรียงลำดับกัน และนำมาวางไว้ข้างบนสุด มิฉนั้นติดปัญหา [Authorize] ไม่ผ่าน
+builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+      .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 2; // ตั้งค่าความยาวขั้นต่ำของรหัสผ่าน
+});
+#endregion Important
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(options => {
@@ -66,15 +84,6 @@ builder.Services.AddAuthentication(x =>
     });
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-
-//CONTEXT
-builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-       .AddEntityFrameworkStores<ApplicationDbContext>();
-
 
 //SERVICE
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();

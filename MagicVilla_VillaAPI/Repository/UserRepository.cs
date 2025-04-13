@@ -95,9 +95,12 @@ namespace MagicVilla_VillaAPI.Repository
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
-                    if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    if (!await _roleManager.RoleExistsAsync("admin"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole("admin"));
+                    }
+                    if (!await _roleManager.RoleExistsAsync("customer"))
+                    {
                         await _roleManager.CreateAsync(new IdentityRole("customer"));
                     }
 
@@ -110,9 +113,9 @@ namespace MagicVilla_VillaAPI.Repository
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.Message); // หรือ log e.ToString() ก็ได้
+                throw; // เพื่อให้รู้ว่ามีข้อผิดพลาดอะไร
             }
-
             return new UserDTO();
         }
     }
