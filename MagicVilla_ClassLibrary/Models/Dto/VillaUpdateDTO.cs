@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,7 +23,9 @@ namespace MagicVilla_ClassLibrary.Models.Dto
         [Required]
         public int Sqft { get; set; }
         [Required]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? ImageLocalPath { get; set; }
+        public IFormFile? Image { get; set; }
         public string Amenity { get; set; }
     }
 }
