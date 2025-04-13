@@ -17,5 +17,8 @@ namespace MagicVilla_ClassLibrary.Utility
         }
 
         public static string AccessToken = "JWTToken";
+
+        public const string Admin = "admin";
+        public const string Customer = "customer";
     }
 }
