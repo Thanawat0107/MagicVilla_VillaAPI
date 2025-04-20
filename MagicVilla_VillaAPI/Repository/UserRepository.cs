@@ -53,27 +53,10 @@ namespace MagicVilla_VillaAPI.Repository
                 };
             }
 
-            //if user was found generate JWT Token
-
-            var roles = await _userManager.GetRolesAsync(user);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secretKey);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                      new Claim(ClaimTypes.Name, user.UserName.ToString()),
-                      new Claim(ClaimTypes.Role, roles.FirstOrDefault())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var accessToken = await GetAccessToken(user);
             TokenDTO tokenDto = new TokenDTO()
             {
-                AccessToken = tokenHandler.WriteToken(token),
+                AccessToken = accessToken
             };
             return tokenDto;
         }
@@ -93,11 +76,7 @@ namespace MagicVilla_VillaAPI.Repository
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
-                    if (!await _roleManager.RoleExistsAsync(registerationRequestDTO.Role))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(registerationRequestDTO.Role));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(registerationRequestDTO.Role))
+                    if (!_roleManager.RoleExistsAsync(registerationRequestDTO.Role).GetAwaiter().GetResult())
                     {
                         await _roleManager.CreateAsync(new IdentityRole(registerationRequestDTO.Role));
                     }
@@ -111,10 +90,33 @@ namespace MagicVilla_VillaAPI.Repository
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message); // หรือ log e.ToString() ก็ได้
-                throw; // เพื่อให้รู้ว่ามีข้อผิดพลาดอะไร
+
             }
             return new UserDTO();
+        }
+
+        protected async Task<string> GetAccessToken(ApplicationUser user)
+        {
+            //if user was found generate JWT Token
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                      new Claim(ClaimTypes.Name, user.UserName.ToString()),
+                      new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenStr = tokenHandler.WriteToken(token);
+            return tokenStr;
         }
     }
 }
