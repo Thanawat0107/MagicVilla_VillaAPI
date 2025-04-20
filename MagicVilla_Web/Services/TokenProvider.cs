@@ -16,7 +16,7 @@ namespace MagicVilla_Web.Services
 
         public void ClearToken()
         {
-            _contextAccessor.HttpContext?.Response.Cookies.Delete(SD.RefreshToken);
+            _contextAccessor.HttpContext?.Response.Cookies.Delete(SD.AccessToken);
         }
 
         public TokenDTO GetToken()
@@ -41,7 +41,7 @@ namespace MagicVilla_Web.Services
         public void SetToken(TokenDTO tokenDTO)
         {
             var cookieOptions = new CookieOptions { Expires = DateTime.UtcNow.AddDays(60) };
-            _contextAccessor.HttpContext?.Response.Cookies.Append(SD.RefreshToken, tokenDTO.RefreshToken, cookieOptions);
+            _contextAccessor.HttpContext?.Response.Cookies.Append(SD.AccessToken, tokenDTO.AccessToken, cookieOptions);
         }
     }
 }
