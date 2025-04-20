@@ -10,7 +10,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 //SERVICE
-
 builder.Services.AddHttpClient<IVillaService, VillaService>();
 builder.Services.AddScoped<IVillaService, VillaService>();
 builder.Services.AddHttpClient<IVillaNumberService, VillaNumberService>();
@@ -33,6 +32,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                     options.AccessDeniedPath = "/Auth/AccessDenied";
                     options.SlidingExpiration = true;
                 });
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 
 var app = builder.Build();
 
