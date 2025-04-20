@@ -153,15 +153,17 @@ namespace MagicVilla_VillaAPI.Repository
             if (!existingRefreshToken.IsValid)
             {
                 var chainRecords = _db.RefreshTokens.Where(u => u.UserId == existingRefreshToken.UserId
-                && u.JwtTokenId == existingRefreshToken.JwtTokenId);
-
-                foreach (var item in chainRecords)
-                {
-                    item.IsValid = false;
-                }
-                _db.UpdateRange(chainRecords);
-                _db.SaveChanges();
+                 && u.JwtTokenId == existingRefreshToken.JwtTokenId)
+                     .ExecuteUpdate(u => u.SetProperty(refreshToken => refreshToken.IsValid, false));
                 return new TokenDTO();
+                //&& u.JwtTokenId == existingRefreshToken.JwtTokenId);
+
+                //foreach (var item in chainRecords)
+                //{
+                //    item.IsValid = false;
+                //}
+                //_db.UpdateRange(chainRecords);
+                //_db.SaveChanges();
             }
 
             // If just expired then mark as invalid and return empty
