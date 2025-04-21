@@ -1,17 +1,17 @@
 global using MagicVilla_ClassLibrary.Models;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using MagicVilla_VillaAPI;
 using MagicVilla_VillaAPI.Data;
 using MagicVilla_VillaAPI.Mapper;
-using MagicVilla_VillaAPI.Repository;
-using MagicVilla_VillaAPI.Repository.IRepostiory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,9 +66,14 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 //SERVICE
-builder.Services.AddScoped<IVillaRepository, VillaRepository>();
-builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+//ใช้ AutoFac ลงทะเบียนโดยอัตโนมัติกรณีมีหลายๆ Service
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder =>
+{
+    containerBuilder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+    .Where(t => t.Name.EndsWith("Repository") || t.Name.EndsWith("Test"))
+    .AsImplementedInterfaces()
+    .InstancePerLifetimeScope(); // เทียบเท่า AddScoped;
+}));
 builder.Services.AddControllers(option =>
 {
     option.CacheProfiles.Add("Default30",
