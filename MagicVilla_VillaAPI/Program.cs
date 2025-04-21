@@ -78,8 +78,10 @@ builder.Services.AddAuthentication(x =>
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidIssuer = "https://magicvilla-api.com",
+            ValidAudience = "https://test.com",
             ClockSkew = TimeSpan.Zero,
         };
     });
